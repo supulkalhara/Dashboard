@@ -6,12 +6,30 @@ Original file is located at
 # **Data Pre-processing**
 """
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn import metrics
 from sklearn.model_selection import train_test_split
 
 import pandas as pd
 import numpy as np
 
-def modeling(X, y):
+
+def iqr(df , features):
+  for f in features:
+    mean = df[f].mean()
+    Q1 = df[f].quantile(0.25)
+    Q3 = df[f].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_range = Q1 - (1.5 * IQR)
+    upper_range = Q3 + (1.5 * IQR)
+    df[f] = np.where(df[f] <lower_range,lower_range ,df[f])
+    df[f] = np.where(df[f] >upper_range, upper_range,df[f])
+  return df
+
+
+# RandomForestClassifier
+def random_forest(X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=101)
     model_rf = RandomForestClassifier(n_estimators=1000 , 
                                       oob_score = True, 
@@ -20,7 +38,26 @@ def modeling(X, y):
                                       max_features = "auto",
                                       max_leaf_nodes = 30)
     model_rf.fit(X_train, y_train)
-    return model_rf
+    preds = model_rf.predict(X_test)
+    return model_rf, metrics.accuracy_score(y_test, preds)
+  
+  
+# LogisticRegression
+def logistic_regression(X, y):
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+  model = LogisticRegression()
+  result = model.fit(X_train, y_train)
+  prediction_test = model.predict(X_test)
+  return prediction_test, metrics.accuracy_score(y_test, prediction_test)
+
+
+#ADA Boost
+def ada_boost(X, y):
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=99)
+  model = AdaBoostClassifier()
+  model.fit(X_train,y_train)
+  preds = model.predict(X_test)
+  return preds, metrics.accuracy_score(y_test, preds)
 
 
 """## **Load CSV**"""
@@ -44,19 +81,6 @@ for f in num_features:
 chatterbox = chatterbox.dropna()
 chatterbox_test = chatterbox_test.dropna()
 
-def iqr(df , features):
-  for f in features:
-    mean = df[f].mean()
-    Q1 = df[f].quantile(0.25)
-    Q3 = df[f].quantile(0.75)
-    IQR = Q3 - Q1
-    lower_range = Q1 - (1.5 * IQR)
-    upper_range = Q3 + (1.5 * IQR)
-    df[f] = np.where(df[f] <lower_range,lower_range ,df[f])
-    df[f] = np.where(df[f] >upper_range, upper_range,df[f])
-  return df
-
-
 rem_features = ['total_day_min', 'total_day_calls', 'total_day_charge', 
                 'total_eve_min', 'total_eve_calls', 'total_eve_charge', 
                 'total_night_minutes', 'total_night_calls', 'total_night_charge', 
@@ -65,8 +89,27 @@ rem_features = ['total_day_min', 'total_day_calls', 'total_day_charge',
 chatterbox = iqr(chatterbox, rem_features)
 chatterbox_test = iqr(chatterbox_test, rem_features)
 
-chatterbox = pd.concat([customer_id_temp, chatterbox], axis=1).reindex(chatterbox.index)
-chatterbox_test = pd.concat([customer_id_temp_test, chatterbox_test], axis=1).reindex(chatterbox_test.index)
+# chatterbox = pd.concat([customer_id_temp, chatterbox], axis=1).reindex(chatterbox.index)
+# chatterbox_test = pd.concat([customer_id_temp_test, chatterbox_test], axis=1).reindex(chatterbox_test.index)
+
+chatterbox['intertiol_plan'].replace(to_replace='yes', value=1, inplace=True)
+chatterbox['intertiol_plan'].replace(to_replace='no',  value=0, inplace=True)
+
+chatterbox['intertiol_plan'].replace(to_replace='yes', value=1, inplace=True)
+chatterbox['intertiol_plan'].replace(to_replace='no',  value=0, inplace=True)
+
+chatterbox['voice_mail_plan'].replace(to_replace='yes', value=1, inplace=True)
+chatterbox['voice_mail_plan'].replace(to_replace='no',  value=0, inplace=True)
+
+chatterbox['voice_mail_plan'].replace(to_replace='yes', value=1, inplace=True)
+chatterbox['voice_mail_plan'].replace(to_replace='no',  value=0, inplace=True)
+
+chatterbox['Churn'].replace(to_replace='Yes', value=1, inplace=True)
+chatterbox['Churn'].replace(to_replace='No',  value=0, inplace=True)
+
+chatterbox['location_code'].replace(to_replace=445.0, value=0, inplace=True)
+chatterbox['location_code'].replace(to_replace=452.0,  value=1, inplace=True)
+chatterbox['location_code'].replace(to_replace=547.0,  value=2, inplace=True)
 
 pre_processed_dataset_train = chatterbox
 pre_processed_dataset_test = chatterbox_test
@@ -76,10 +119,9 @@ pre_processed_dataset_test = chatterbox_test
 # pre_processed_dataset_test.to_csv("Test_Dataset_"+student_id, index=False)
 
 
-
-
 y = chatterbox['Churn']
-X = chatterbox.drop(columns=['location_code', 'intertiol_plan' , 'voice_mail_plan' , 'Churn'])
+X = chatterbox.drop(columns=['Churn'])
 
-rf_model = modeling(X, y)
-
+rf_model, rf_accuracy = random_forest(X, y)
+lr_model, lr_accuracy = logistic_regression(X, y)
+ada_model, ada_accuracy = ada_boost(X, y)
