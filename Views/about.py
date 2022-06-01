@@ -20,19 +20,25 @@ def feature_importance(X, rf_model):
     feature_names = [f"feature {i}" for i in range(X.shape[1])]
     importances = rf_model.feature_importances_
     std = np.std([tree.feature_importances_ for tree in rf_model.estimators_], axis=0)
-    forest_importances = pd.Series(importances, index=feature_names)
+    forest_importances = pd.Series(importances, index=X.columns)
     fig, ax = plt.subplots()
     forest_importances.plot.bar(yerr=std, ax=ax)
-    ax.set_title("Feature importances using MDI")
+    # ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
     return fig
 
 def aboutView():    
     
 #--------------------------------------
+
+    df = pre_processed_dataset_train
+    with st.expander("See summary of the dataset"):
+            st.write(df.describe())
+            
+            
     st.subheader("Correlations")
     st.write("Select the features that you need to see correlation")
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns((1, 1, 1, .5))
     
     col = list(pre_processed_dataset_train.columns)
     correlation_df = show_correlations(pre_processed_dataset_train[col],show_chart=True)
@@ -56,7 +62,7 @@ def aboutView():
     
     with col4.expander(""):
         col4.write("See heatmap:")
-        # col4.write(correlation_df)
+        col4.write(correlation_df)
         
 #--------------------------------------
     st.subheader("Feature Analysis")
@@ -76,20 +82,21 @@ def aboutView():
     if (option3 == 'Bar plot'):
         option4 = col2.selectbox(
         'Feature 1:',
-        (pre_processed_dataset_train.columns))  
+        (num_features))  
         
         type = st.radio(
             "Do you want to plot 2 fetures?",
             ('No', 'Yes'))
         if type == 'No':
-            st.bar_chart(pre_processed_dataset_train[option3])
+            st.bar_chart(pre_processed_dataset_train[option4])
         elif type == 'Yes':
             option5 = col3.selectbox(
             'Feature 2:',
-            (pre_processed_dataset_train.columns))
+            (num_features))
             
             if (option4 != option5):
-                chart_data = pd.DataFrame(columns=[option4, option5])
+                # chart_data = pd.DataFrame(columns=[option4, option5])
+                chart_data = [pre_processed_dataset_train[option4], pre_processed_dataset_train[option5]]
                 st.bar_chart(chart_data)
             else:
                 original_title = '<p style="font-family:Courier; color:red; font-size: 15px;">You cannot select the same feature</p>'
@@ -98,19 +105,19 @@ def aboutView():
     elif (option3 == 'Histogram'):
         option4 = col2.selectbox(
         'Feature 1:',
-        (pre_processed_dataset_train.columns))  
+        (num_features))  
         
         type = st.radio(
             "Do you want to plot 2 fetures?",
             ('No', 'Yes'))
         if type == 'No':
-            fig = ff.create_distplot(pre_processed_dataset_train[option4], option4, bin_size=[.1, .25, .5])
+            fig = ff.create_distplot([pre_processed_dataset_train[option4]], [option4])
             st.plotly_chart(fig, use_container_width=True)
             
         elif type == 'Yes':
             option5 = col3.selectbox(
             'Feature 2:',
-            (pre_processed_dataset_train.columns))
+            (num_features))
             
             if (option4 != option5):
                 x1 = pre_processed_dataset_train[option4]
@@ -128,31 +135,23 @@ def aboutView():
     elif (option3 == 'Line Chart') :
         option4 = col2.selectbox(
         'Feature 1:',
-        (pre_processed_dataset_train.columns))  
+        (num_features))  
+
+        option5 = col3.selectbox(
+        'Feature 2:',
+        (num_features))
         
-        type = st.radio(
-            "Do you want to plot 2 fetures?",
-            ('No', 'Yes'))
-        if type == 'No':
-            fig = ff.create_distplot(pre_processed_dataset_train[option4], option4)
-            st.line_chart(fig)
+        if (option4 != option5):
+            x1 = pre_processed_dataset_train[option4]
+            x2 = pre_processed_dataset_train[option5]
+            group_labels = [option4, option5]
             
-        elif type == 'Yes':
-            option5 = col3.selectbox(
-            'Feature 2:',
-            (pre_processed_dataset_train.columns))
-            
-            if (option4 != option5):
-                # x1 = pre_processed_dataset_train[option4]
-                # x2 = pre_processed_dataset_train[option5]
-                group_labels = [option4, option5]
-                
-                chart_data = pd.DataFrame(columns=[option4, option5])
-                fig = ff.create_distplot(chart_data, group_labels)
-                st.plotly_chart(fig)
-            else:
-                original_title = '<p style="font-family:Courier; color:red; font-size: 15px;">You cannot select the same feature</p>'
-                st.markdown(original_title, unsafe_allow_html=True)
+            chart_data = [x1, x2]
+            fig = ff.create_distplot(chart_data, group_labels)
+            st.plotly_chart(fig)
+        else:
+            original_title = '<p style="font-family:Courier; color:red; font-size: 15px;">You cannot select the same feature</p>'
+            st.markdown(original_title, unsafe_allow_html=True)
         
     elif (option3 == 'Area plot'):
         st.area_chart(pre_processed_dataset_train)
@@ -161,25 +160,25 @@ def aboutView():
     elif (option3 == 'Scatter plot'):
         option4 = col2.selectbox(
         'Feature 1:',
-        (pre_processed_dataset_train.columns))  
+        (num_features))  
         
         type = st.radio(
             "Do you want to plot 2 fetures?",
             ('No', 'Yes'))
         if type == 'No':
-            fig = ff.create_distplot(pre_processed_dataset_train[option4], option4)
+            fig = ff.create_distplot([pre_processed_dataset_train[option4]], [option4])
             st.map(fig)
             
         elif type == 'Yes':
             option5 = col3.selectbox(
             'Feature 2:',
-            (pre_processed_dataset_train.columns))
+            (num_features))
             
             if (option4 != option5):
                 # x1 = pre_processed_dataset_train[option4]
                 # x2 = pre_processed_dataset_train[option5]
                 group_labels = [option4, option5]
-                chart_data = pd.DataFrame(columns=[option4, option5])
+                chart_data = [pre_processed_dataset_train[option4], pre_processed_dataset_train[option5]]
                 fig = ff.create_distplot(chart_data, group_labels)
                 st.map(fig)
             else:
@@ -187,12 +186,8 @@ def aboutView():
                 st.markdown(original_title, unsafe_allow_html=True)
                 
 
-    
-    # def plotGraph():
-    #     st.write(pre_processed_dataset_train.plot(x=option, y=option2, kind="hist"))
-    # st.button("Plot", on_click=plotGraph)
-     
-    st.subheader("Feature Analysis")   
+
+    st.subheader("Feature Importance")   
     with st.expander(""):
-        st.write("See feature importance:")
+        st.write("See feature importance using random forest:")
         st.write(feature_importance(X, rf_model))

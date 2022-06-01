@@ -28,38 +28,5 @@ elif selected == 'Predict':
 else:
     home.homeView()
         
-                # st.write("acc_length", acc_length, 
-                #          "location_code", location_code,
-                #          "number_vm_messages", number_vm_messages,
-                #          "total_day_min", total_day_min,
-                #          "total_day_calls", total_day_calls,
-                #          "total_day_charge", total_day_charge,
-                #          "total_eve_min", total_eve_min,
-                #          "total_eve_calls", total_eve_calls,
-                #          "total_eve_charge", total_eve_charge,
-                #          "total_night_minutes", total_night_minutes,
-                #          "total_night_calls", total_night_calls,
-                #          "total_night_charge", total_night_charge,
-                #          "total_intl_minutes", total_intl_minutes,
-                #          "total_intl_calls", total_intl_calls,
-                #          "total_intl_charge", total_intl_charge,
-                #          "customer_service_calls", customer_service_calls
-                #          )
-
-    #         data = df.loc[countries]
-
-    #         data = data.T.reset_index()
-    #         data = pd.melt(data, id_vars=["index"]).rename(
-    #             columns={"index": "year", "value": "Gross Agricultural Product ($B)"}
-    #         )
-    #         chart = (
-    #             alt.Chart(data)
-    #             .mark_area(opacity=0.3)
-    #             .encode(
-    #                 x="year:T",
-    #                 y=alt.Y("Gross Agricultural Product ($B):Q", stack=None),
-    #                 color="Region:N",
-    #             )
-    #         )
     #         st.altair_chart(chart, use_container_width=True)
 

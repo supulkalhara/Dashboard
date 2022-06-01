@@ -111,6 +111,12 @@ chatterbox['location_code'].replace(to_replace=445.0, value=0, inplace=True)
 chatterbox['location_code'].replace(to_replace=452.0,  value=1, inplace=True)
 chatterbox['location_code'].replace(to_replace=547.0,  value=2, inplace=True)
 
+chatterbox['total_mins'] = chatterbox['total_day_min'] + chatterbox['total_eve_min'] + chatterbox['total_night_minutes']
+chatterbox['total_calls'] = chatterbox['total_day_calls'] + chatterbox['total_eve_calls'] + chatterbox['total_night_calls']
+chatterbox['total_charge'] = chatterbox['total_day_charge'] + chatterbox['total_eve_charge'] + chatterbox['total_night_charge']
+chatterbox['avg_min_per_call'] = chatterbox['total_mins']  / chatterbox['total_calls']
+
+num_features = list(set(chatterbox.columns) - set(obj_features))
 pre_processed_dataset_train = chatterbox
 pre_processed_dataset_test = chatterbox_test
 # student_id = "190482K.csv"
@@ -119,8 +125,11 @@ pre_processed_dataset_test = chatterbox_test
 # pre_processed_dataset_test.to_csv("Test_Dataset_"+student_id, index=False)
 
 
+
 y = chatterbox['Churn']
 X = chatterbox.drop(columns=['Churn'])
+
+
 
 rf_model, rf_accuracy = random_forest(X, y)
 lr_model, lr_accuracy = logistic_regression(X, y)

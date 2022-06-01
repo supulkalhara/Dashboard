@@ -1,3 +1,4 @@
+from matplotlib.ft2font import HORIZONTAL
 import streamlit as st
 from churn import *
 
@@ -27,32 +28,44 @@ def churnPredict():
             # slider_val = st.slider("Form slider")
             # checkbox_val = st.checkbox("Form checkbox")
             
+            type = st.radio(
+                "Select Model",
+                ('Random Forest', 'Logistic Regression', 'ADA Boost'))
+            if type == 'Random Forest':
+                rf = True;
+            elif type == 'Logistic Regression':
+                rf = True;
+            elif type == 'ADA Boost':
+                rf = True;
+            
         # Every form must have a submit button.
-            submitted = st.form_submit_button("Submit")
-            if submitted:
-                new_row = {acc_length, 
-                        location_code, 
-                        number_vm_messages,
-                        total_day_min,
-                        total_day_calls,
-                        total_day_charge,
-                        total_eve_min,
-                        total_eve_calls,
-                        total_eve_charge,
-                        total_night_minutes,
-                        total_night_calls,
-                        total_night_charge,
-                        total_intl_minutes,
-                        total_intl_calls,
-                        total_intl_charge,
-                        customer_service_calls}
-                
-                prediction = rf_model.predict(new_row)
-                if prediction == 0:
-                    churn = 'NO CHURN'
-                else:
-                    churn = 'CHURN'
+            try:
+                submitted = st.form_submit_button("Submit")
+                if submitted:
+                    new_row = {acc_length, 
+                            location_code, 
+                            number_vm_messages,
+                            total_day_min,
+                            total_day_calls,
+                            total_day_charge,
+                            total_eve_min,
+                            total_eve_calls,
+                            total_eve_charge,
+                            total_night_minutes,
+                            total_night_calls,
+                            total_night_charge,
+                            total_intl_minutes,
+                            total_intl_calls,
+                            total_intl_charge,
+                            customer_service_calls}
                     
-                st.write("Predicted Churn for the entered details:", 
-                        churn)
-    
+                    prediction = rf_model.predict(new_row)
+                    if prediction == 0:
+                        churn = 'NO CHURN'
+                    else:
+                        churn = 'CHURN'
+                        
+                    st.write("Predicted Churn for the entered details:", 
+                            churn)
+            except:
+                st.write("Input all!")
