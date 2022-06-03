@@ -102,7 +102,7 @@ streamlit-option-menu
 # tzdata==2022.1
 # tzlocal==4.2
 # unicodedata2==14.0.0
-urllib
+# urllib
 urllib3==1.26.9
 # validators==0.19.0
 # watchdog==2.1.8
