@@ -17,13 +17,11 @@ def show_correlations(dataframe, show_chart = True):
     return fig
 
 def feature_importance(X, rf_model):
-    feature_names = [f"feature {i}" for i in range(X.shape[1])]
     importances = rf_model.feature_importances_
     std = np.std([tree.feature_importances_ for tree in rf_model.estimators_], axis=0)
     forest_importances = pd.Series(importances, index=X.columns)
     fig, ax = plt.subplots()
     forest_importances.plot.bar(yerr=std, ax=ax)
-    # ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
     return fig
 
@@ -75,7 +73,7 @@ def aboutView():
          'Histogram', 
          'Line Chart', 
          'Area plot', 
-         'Scatter plot')
+         ) # 'Scatter plot'
     )   
         
     
@@ -188,6 +186,5 @@ def aboutView():
 
 
     st.subheader("Feature Importance")   
-    with st.expander(""):
-        st.write("See feature importance using random forest:")
-        st.write(feature_importance(X, rf_model))
+    st.write("See feature importance using random forest:")
+    st.write(feature_importance(X, rf_model))

@@ -46,9 +46,9 @@ def random_forest(X, y):
 def logistic_regression(X, y):
   X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
   model = LogisticRegression()
-  result = model.fit(X_train, y_train)
+  model.fit(X_train, y_train)
   prediction_test = model.predict(X_test)
-  return prediction_test, metrics.accuracy_score(y_test, prediction_test)
+  return model, metrics.accuracy_score(y_test, prediction_test)
 
 
 #ADA Boost
@@ -57,7 +57,7 @@ def ada_boost(X, y):
   model = AdaBoostClassifier()
   model.fit(X_train,y_train)
   preds = model.predict(X_test)
-  return preds, metrics.accuracy_score(y_test, preds)
+  return model, metrics.accuracy_score(y_test, preds)
 
 
 """## **Load CSV**"""
@@ -125,11 +125,8 @@ pre_processed_dataset_test = chatterbox_test
 # pre_processed_dataset_test.to_csv("Test_Dataset_"+student_id, index=False)
 
 
-
 y = chatterbox['Churn']
 X = chatterbox.drop(columns=['Churn'])
-
-
 
 rf_model, rf_accuracy = random_forest(X, y)
 lr_model, lr_accuracy = logistic_regression(X, y)
