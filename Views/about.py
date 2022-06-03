@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import seaborn as sns
-import altair as alt
 
 def show_correlations(dataframe, show_chart = True):
     fig = plt.figure()

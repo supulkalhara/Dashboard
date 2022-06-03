@@ -1,4 +1,4 @@
-from distutils.log import error
+# from distutils.log import error
 from matplotlib.ft2font import HORIZONTAL
 import streamlit as st
 from churn import *
