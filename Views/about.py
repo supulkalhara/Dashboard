@@ -7,7 +7,6 @@ import plotly.express as px
 import seaborn as sns
 
 def show_correlations(dataframe, show_chart = True):
-    fig = plt.figure()
     corr = dataframe.corr()
     if show_chart == True:
         fig = px.imshow(corr,
@@ -18,8 +17,8 @@ def show_correlations(dataframe, show_chart = True):
 
 def feature_importance(X, rf_model):
     importances = rf_model.feature_importances_
-    forest_importances = pd.Series(importances, index=X.columns)
-    fig = st.bar_chart(forest_importances)
+    st.write(X.columns)
+    fig = px.bar(x=X.columns, y=importances)
     return fig
 
 def aboutView():    
@@ -176,4 +175,5 @@ def aboutView():
                 
     st.subheader("Feature Importance")   
     st.write("See feature importance using random forest:")
-    st.write(feature_importance(X, rf_model))
+    fig = feature_importance(X, rf_model)
+    st.plotly_chart(fig, use_container_width=True)
